@@ -16,7 +16,7 @@
 package org.jdeferred.impl;
 
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.ArrayList;
 
 import org.jdeferred.AlwaysCallback;
 import org.jdeferred.DoneCallback;
@@ -26,8 +26,8 @@ import org.jdeferred.FailFilter;
 import org.jdeferred.ProgressCallback;
 import org.jdeferred.ProgressFilter;
 import org.jdeferred.Promise;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -36,14 +36,14 @@ import org.slf4j.LoggerFactory;
  *
  */
 public abstract class AbstractPromise<D, F, P> implements Promise<D, F, P> {
-	final protected Logger log = LoggerFactory.getLogger(AbstractPromise.class);
+	final protected Logger log = Logger.getLogger(AbstractPromise.class.getName());
 	
 	protected volatile State state = State.PENDING;
 
-	protected final List<DoneCallback<D>> doneCallbacks = new CopyOnWriteArrayList<DoneCallback<D>>();
-	protected final List<FailCallback<F>> failCallbacks = new CopyOnWriteArrayList<FailCallback<F>>();
-	protected final List<ProgressCallback<P>> progressCallbacks = new CopyOnWriteArrayList<ProgressCallback<P>>();
-	protected final List<AlwaysCallback<D, F>> alwaysCallbacks = new CopyOnWriteArrayList<AlwaysCallback<D, F>>();
+	protected final List<DoneCallback<D>> doneCallbacks = new ArrayList<DoneCallback<D>>();
+	protected final List<FailCallback<F>> failCallbacks = new ArrayList<FailCallback<F>>();
+	protected final List<ProgressCallback<P>> progressCallbacks = new ArrayList<ProgressCallback<P>>();
+	protected final List<AlwaysCallback<D, F>> alwaysCallbacks = new ArrayList<AlwaysCallback<D, F>>();
 	
 	protected D resolveResult;
 	protected F rejectResult;
@@ -105,7 +105,7 @@ public abstract class AbstractPromise<D, F, P> implements Promise<D, F, P> {
 			try {
 				callback.onDone(resolved);
 			} catch (Exception e) {
-				log.error("an uncaught exception occured in a DoneCallback", e);
+				log.log(Level.SEVERE, "an uncaught exception occured in a DoneCallback", e);
 			}
 		}
 	}
@@ -115,7 +115,7 @@ public abstract class AbstractPromise<D, F, P> implements Promise<D, F, P> {
 			try {
 				callback.onFail(rejected);
 			} catch (Exception e) {
-				log.error("an uncaught exception occured in a FailCallback", e);
+				log.log(Level.SEVERE, "an uncaught exception occured in a FailCallback", e);
 			}
 		}
 	}
@@ -125,7 +125,7 @@ public abstract class AbstractPromise<D, F, P> implements Promise<D, F, P> {
 			try {
 				callback.onProgress(progress);
 			} catch (Exception e) {
-				log.error("an uncaught exception occured in a ProgressCallback", e);
+				log.log(Level.SEVERE, "an uncaught exception occured in a ProgressCallback", e);
 			}
 		}
 	}
@@ -135,7 +135,7 @@ public abstract class AbstractPromise<D, F, P> implements Promise<D, F, P> {
 			try {
 				callback.onAlways(state, resolve, reject);
 			} catch (Exception e) {
-				log.error("an uncaught exception occured in a AlwaysCallback", e);
+				log.log(Level.SEVERE, "an uncaught exception occured in a AlwaysCallback", e);
 			}
 		}
 	}

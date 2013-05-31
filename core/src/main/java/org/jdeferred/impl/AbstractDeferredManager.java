@@ -28,12 +28,9 @@ import org.jdeferred.multiple.MasterProgress;
 import org.jdeferred.multiple.MasterDeferredObject;
 import org.jdeferred.multiple.MultipleResults;
 import org.jdeferred.multiple.OneReject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class AbstractDeferredManager implements DeferredManager {
-	final protected Logger log = LoggerFactory.getLogger(AbstractDeferredManager.class);
 	
 	protected abstract void submit(Runnable runnable);
 	protected abstract void submit(Callable callable);
