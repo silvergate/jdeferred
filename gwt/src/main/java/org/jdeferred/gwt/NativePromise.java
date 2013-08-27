@@ -38,15 +38,16 @@ public final class NativePromise<D, F, P> extends JavaScriptObject implements Pr
 	
 	private native Promise<D, F, P> internalPromise() /*-{
       if(!this.__jdeferred) {
-		  this.__jdeferred = @org.jdeferred.impl.DeferredObject::new()();
+      	  var d = @org.jdeferred.impl.DeferredObject::new()();
+		  this.__jdeferred = d;
 		  this.done(function(result) {
-		  	this.__jdeferred.@org.jdeferred.Deferred::resolve(Ljava/lang/Object;)(result);
+		  	d.@org.jdeferred.Deferred::resolve(Ljava/lang/Object;)(result);
 		  })
 		  .fail(function(result) {
-		  	this.__jdeferred.@org.jdeferred.Deferred::reject(Ljava/lang/Object;)(result);
+		  	d.@org.jdeferred.Deferred::reject(Ljava/lang/Object;)(result);
 		  })
 		  .progress(function(progress) {
-		  	this.__jdeferred.@org.jdeferred.Deferred::notify(Ljava/lang/Object;)(progress);
+		  	d.@org.jdeferred.Deferred::notify(Ljava/lang/Object;)(progress);
 		  });
       }
       return this.__jdeferred;

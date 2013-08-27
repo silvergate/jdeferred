@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.jdeferred</groupId>
 		<artifactId>jdeferred</artifactId>
-		<version>1.0.0-lb</version>
+		<version>1.0.1-lb</version>
 	</parent>
 	<artifactId>jdeferred-gwt</artifactId>
 	<dependencies>
