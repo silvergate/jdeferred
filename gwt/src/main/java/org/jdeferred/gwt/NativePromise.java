@@ -23,7 +23,7 @@ import org.jdeferred.FailFilter;
 import org.jdeferred.ProgressCallback;
 import org.jdeferred.ProgressFilter;
 import org.jdeferred.Promise;
-
+import org.jdeferred.gwt.impl.PromiseGwtHack;
 import com.google.gwt.core.client.JavaScriptObject;
 
 /**
@@ -31,9 +31,13 @@ import com.google.gwt.core.client.JavaScriptObject;
  *
  */
 public final class NativePromise<D, F, P> extends JavaScriptObject implements Promise<D, F, P> {
-	
+
+    static {
+        /* Apply the GWT hack. Does nothing except removing GWT compiler errors. */
+        PromiseGwtHack.injectHack();
+    }
+    
 	protected NativePromise() { 
-		
 	};
 	
 	private native Promise<D, F, P> internalPromise() /*-{

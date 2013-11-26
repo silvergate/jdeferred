@@ -1,20 +1,12 @@
 /*
- * Copyright 2013 Ray Tsang
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2013 Ray Tsang Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
+ * OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 package org.jdeferred.impl;
 
+import java.util.ArrayList;
+import org.jdeferred.AlwaysCallback;
 import org.jdeferred.Deferred;
 import org.jdeferred.DoneCallback;
 import org.jdeferred.FailCallback;
@@ -22,7 +14,7 @@ import org.jdeferred.ProgressCallback;
 import org.jdeferred.Promise;
 
 /**
- * An implementation of {@link Deferred} interface.
+ * An implementation of {@link Deferred} interface for GWT.
  * 
  * <pre>
  * <code>
@@ -55,56 +47,21 @@ import org.jdeferred.Promise;
  * @see ProgressCallback
  * @author Ray Tsang
  */
-public class DeferredObject<D, F, P> extends AbstractPromise<D, F, P> implements Deferred<D, F, P> {
-	
-	@Override
-	public Deferred<D, F, P> resolve(final D resolve) {
-		final State state;
-		synchronized (this) {
-			if (!isPending())
-				throw new IllegalStateException("Deferred object already finished, cannot resolve again");
-			
-			this.state = state = State.RESOLVED;
-			this.resolveResult = resolve;
-		}
-		try {
-			triggerDone(resolve);
-		} finally {
-			triggerAlways(state, resolve, null);
-		}
-		return this;
-	}
+public class DeferredObject<D, F, P> extends AbstractDeferredObject<D, F, P> {
 
-	@Override
-	public Deferred<D, F, P> notify(final P progress) {
-		synchronized (this) {
-			if (!isPending())
-				throw new IllegalStateException("Deferred object already finished, cannot notify progress");
-			
-			state = State.PENDING;
-		}
-		triggerProgress(progress);
-		return this;
-	}
+    private static ExceptionHandler exceptionHandler;
 
-	@Override
-	public Deferred<D, F, P> reject(final F reject) {
-		State state;
-		synchronized (this) {
-			if (!isPending())
-				throw new IllegalStateException("Deferred object already finished, cannot reject again");
-			this.state = state = State.REJECTED;
-			this.rejectResult = reject;
-		}
-		try {
-			triggerFail(reject);
-		} finally {
-			triggerAlways(state, null, reject);
-		}
-		return this;
-	}
+    public DeferredObject() {
+        super(exceptionHandler, false, new ArrayList<DoneCallback<D>>(), new ArrayList<FailCallback<F>>(), new ArrayList<ProgressCallback<P>>(), new ArrayList<AlwaysCallback<D, F>>());
+    }
 
-	public Promise<D, F, P> promise() {
-		return this;
-	}
+    /**
+     * Set a custom exception handler. The exception handler {@link ExceptionHandler#onException(org.jdeferred.impl.ExceptionHandler.Location, Exception, Object)} method is called if a done, fail,
+     * always or progress handler throws an exception.
+     * 
+     * @param exceptionHandler
+     */
+    public static void setExceptionHandler(ExceptionHandler exceptionHandler) {
+        DeferredObject.exceptionHandler = exceptionHandler;
+    }
 }
